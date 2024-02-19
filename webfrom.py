@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import base64
 
 def create_iceberg_table(data):
     # Calculate the total number of rows
@@ -38,16 +39,12 @@ def main():
         # Display the iceberg table using Streamlit
         st.write(iceberg_data)
         
-        # Allow user to specify local path to save the iceberg table
-        save_path = st.text_input("Enter local path to save the iceberg table (e.g., iceberg_table.parquet):")
-        
-        if st.button("Save Iceberg Table") and save_path:
-            try:
-                # Save the iceberg table to the specified path as Parquet file
-                iceberg_data.to_parquet(save_path, index=False)
-                st.success(f"Iceberg table saved to {save_path}")
-            except Exception as e:
-                st.error(f"An error occurred while saving the file: {e}")
+        # Add a download button to download the iceberg table as a Parquet file
+        if not iceberg_data.empty:
+            parquet = iceberg_data.to_parquet(index=False)
+            b64 = base64.b64encode(parquet).decode() 
+            href = f'<a href="data:application/octet-stream;base64,{b64}" download="iceberg_table.parquet">Download Parquet file</a>'
+            st.markdown(href, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
