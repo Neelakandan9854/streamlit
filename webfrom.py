@@ -42,9 +42,12 @@ def main():
         save_path = st.text_input("Enter local path to save the iceberg table (e.g., iceberg_table.parquet):")
         
         if st.button("Save Iceberg Table") and save_path:
-            # Save the iceberg table to the specified path as Parquet file
-            iceberg_data.to_parquet(save_path, index=False)
-            st.success(f"Iceberg table saved to {save_path}")
+            try:
+                # Save the iceberg table to the specified path as Parquet file
+                iceberg_data.to_parquet(save_path, index=False)
+                st.success(f"Iceberg table saved to {save_path}")
+            except Exception as e:
+                st.error(f"An error occurred while saving the file: {e}")
 
 if __name__ == "__main__":
     main()
